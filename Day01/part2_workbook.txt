@@ -77,16 +77,16 @@ from (
 order by lineno;
 
 
-select count(*) from (
-  select lineno, windowsum, windowcount
-    , windowsum - lag(windowsum,1) over (order by lineno) diff
-  from (
-    select lineno, linevalue
-      , count(*) over (order by lineno rows between current row and 2 following) windowcount
-      , sum(to_number(linevalue)) over (order by lineno rows between current row and 2 following) windowsum
-    from day01_part1
-  )
-)
-where diff > 0
-  and windowcount = 3;
+    select count(*) from (
+      select lineno, windowsum, windowcount
+        , windowsum - lag(windowsum,1) over (order by lineno) diff
+      from (
+        select lineno, linevalue
+          , count(*) over (order by lineno rows between current row and 2 following) windowcount
+          , sum(to_number(linevalue)) over (order by lineno rows between current row and 2 following) windowsum
+        from day01_part1
+      )
+    )
+    where diff > 0
+      and windowcount = 3;
 --1471
