@@ -5,4 +5,6 @@
 
 Last year I used SQL for the most part. I'll probably do the same but take a more liberal view towards using pl/sql.
 
-Day 01: [Sonar Sweep](https://adventofcode.com/2021/day/1) - [Analytic functions all the way.](https://github.com/jungwolf/AoC2021/tree/main/Day01)
+| Day | Title/link to puzzle | Comment/link to my code |
+|---|---|---|
+| 01 | [Sonar Sweep](https://adventofcode.com/2021/day/1) | [Analytic functions all the way.](https://github.com/jungwolf/AoC2021/tree/main/Day01)|
