@@ -35,3 +35,58 @@ Consider sums of a three-measurement sliding window. How many sums are larger th
 
 -- using same input as part1, day01_part1
 
+select * from day01_part1 order by lineno;
+
+-- prove the count window works
+select lineno, linevalue, count(*) over (order by lineno rows between current row and 2 following)
+from day01_part1
+order by lineno;
+
+-- add in sum over the window
+select lineno, linevalue
+  , count(*) over (order by lineno rows between current row and 2 following) windowcount
+  , sum(to_number(linevalue)) over (order by lineno rows between current row and 2 following) windowsum
+from day01_part1
+order by lineno;
+
+/*
+-- somehow make the former fit into this pattern:
+select count(*) from (
+select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno) diff
+from day01_part1
+) where diff > 0;
+*/
+
+
+select lineno, windowsum, windowcount from (
+  select lineno, linevalue
+    , count(*) over (order by lineno rows between current row and 2 following) windowcount
+    , sum(to_number(linevalue)) over (order by lineno rows between current row and 2 following) windowsum
+  from day01_part1
+)
+order by lineno;
+
+select lineno, windowsum, windowcount
+  , windowsum - lag(windowsum,1) over (order by lineno) diff
+from (
+  select lineno, linevalue
+    , count(*) over (order by lineno rows between current row and 2 following) windowcount
+    , sum(to_number(linevalue)) over (order by lineno rows between current row and 2 following) windowsum
+  from day01_part1
+)
+order by lineno;
+
+
+select count(*) from (
+  select lineno, windowsum, windowcount
+    , windowsum - lag(windowsum,1) over (order by lineno) diff
+  from (
+    select lineno, linevalue
+      , count(*) over (order by lineno rows between current row and 2 following) windowcount
+      , sum(to_number(linevalue)) over (order by lineno rows between current row and 2 following) windowsum
+    from day01_part1
+  )
+)
+where diff > 0
+  and windowcount = 3;
+--1471
