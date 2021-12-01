@@ -21,6 +21,21 @@ That's LAG(value expression, offset, default value if offset is outside the resu
 
 So there you have it. The edge case is line 1. Sql's null value logic takes care of it; lag of nonexistent line 0 is null, linevalue - null is null, null > 0 is null, line 1 is not included in the count. That worked fine here but keep an eye on null, it isn't friendly.
 
+    .........
+    
+I thought of a better way to solve Part2. A = D1 + D2 + D3. B = D2 + D3 + D4. A - B => D1 - D4. The two numbers shared between A and B mean you only have to know the diff between D1 an D4.
+
+So, use answer to Part1 but increase the lag to 3.
+
+    select count(*) from (
+      select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),3) over (order by lineno) diff
+      from day01_part1
+    ) where diff > 0;
+
+    .........
+
+Previous answer to Part2.
+
 Part2 takes us a level deeper. We're now looking at the sum of 3 lines. The example was pretty clear we shouldn't consider edge cases of the sum of less than 3 lines. So the first thing to do is create that new sum of 3 lines dataset. In this case, instead of looking at previous rows (like in lag) I'll consider the next rows. The last two lines are discarded because they won't have a set of 3.
 
     select lineno, linevalue
