@@ -3,7 +3,7 @@
 
 [Home page](https://adventofcode.com/2021) for this year, 2021.
 
-Last year I used SQL for the most part. I'll probably do the same but take a more liberal view towards using pl/sql.
+I'll put some amount of explaination of my solution in each day's README.md file. Last year I used Oracle SQL for the most part. I'll probably do the same but take a more liberal view towards using pl/sql. **I assume you are familiar with sql to some degree.**
 
 | Day | Title/link to puzzle | Comment/link to my code |
 |---|---|---|
