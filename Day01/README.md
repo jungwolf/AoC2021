@@ -1,5 +1,5 @@
-Day 01 - Analytic functions all the way
-
+# Day 01 - Analytic functions all the way
+## What is an analytic function?
 Basic sql statements return a set of output. "SELECT ... FROM ..." A lot of optional clauses allow you to restrict the output "WHERE", group output rows "GROUP BY", order the output "ORDER BY", perform aggregate calculations on a grouped row, and even filter out grouped rows based on the resulting value "HAVING". 
 
 Analytic funtions are applied after the full result set is created. From the Oracle Sql reference: "Analytic functions are the last set of operations performed in a query except for the final ORDER BY clause. All joins and all WHERE, GROUP BY, and HAVING clauses are completed before the analytic functions are processed. Therefore, analytic functions can appear only in the select list or ORDER BY clause." They extend the sql language from a row-by-row reporting tool to a full set data crunching MONSTER!
