@@ -19,7 +19,7 @@ How many measurements are larger than the previous measurement?
 */
 
 select * from day01_example order by lineno;
-select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno)
+select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno) diff
 from day01_example
 order by lineno;
 
