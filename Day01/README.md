@@ -6,18 +6,20 @@ Analytic funtions are applied after the full result set is created. From the Ora
 
 Time to get prosaic. Part1 asks for the number of rows that have a greater value than the previous row. The LAG function returns the value from a previous row. But sql works on sets, so what is the previous row? Analytic functions can have an individual "ORDER BY" clause. Unlike a text file, a table doesn't have an implicit order; for AoC I give each line of the text file an ascending lineno value. For Part1, I retrieve the "previous row" using LAG ordered by lineno.
 
-(I don't know the markup used for .md files yet so sorry for the following. Oh! 4 spaces at the front of a line makes a text box.)
-
-    select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno) diff
-    from day01_example
-    order by lineno;
+```sql
+select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno) diff
+from day01_example
+order by lineno;
+```
 
 That's LAG(value expression, offset, default value if offset is outside the result set). "linevalue" is the current row's column value, we don't know "lag(linevalue)" until the "base" sql completes and gives us a result set we can play with. 
 
-    select count(*) from (
-      select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno) diff
-      from day01_part1
-    ) where diff > 0;
+```sql
+select count(*) from (
+  select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),1) over (order by lineno) diff
+  from day01_part1
+) where diff > 0;
+```
 
 So there you have it. The edge case is line 1. Sql's null value logic takes care of it; lag of nonexistent line 0 is null, linevalue - null is null, null > 0 is null, line 1 is not included in the count. That worked fine here but keep an eye on null, it isn't friendly.
 
@@ -27,10 +29,12 @@ I thought of a better way to solve Part2. A = D1 + D2 + D3. B = D2 + D3 + D4. A 
 
 So, use answer to Part1 but increase the lag to 3.
 
+```sql
     select count(*) from (
       select lineno, linevalue, to_number(linevalue) - lag(to_number(linevalue),3) over (order by lineno) diff
       from day01_part1
     ) where diff > 0;
+```
 
     .........
 
