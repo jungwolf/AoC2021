@@ -1,0 +1,77 @@
+/*
+In addition to horizontal position and depth, you'll also need to track a third value, aim, which also starts at 0.
+The commands also mean something entirely different than you first thought:
+
+down X increases your aim by X units.
+up X decreases your aim by X units.
+forward X does two things:
+It increases your horizontal position by X units.
+It increases your depth by your aim multiplied by X.
+*/
+
+-- use same input as part1
+select * from day02_part1 order by lineno;
+
+-- view does the same thing as part1, but for clarity give it the part2 name
+-- changing direction to command
+-- distance isn't quite right, but I don't have a better name
+create or replace view day02_part2_v1 as
+select
+  lineno
+  , substr(linevalue,1,a-1) command
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_part1
+)
+/
+
+select * from day02_part2_v1;
+
+-- shouldn't be hard using analytic function
+-- procedure should be easier
+-- any tricks?
+
+create or replace view day02_part2_v2 as
+select lineno step
+  , decode(command,'forward',distance,0) forward
+  , decode(command,'down',distance,'up',-distance,0) aim_delta
+from day02_part2_v1
+;
+select * from day02_part2_v2 order by step;
+-- this time order matters
+
+
+select step
+  , forward
+  , aim_delta
+  , sum(aim_delta) over (order by step RANGE UNBOUNDED PRECEDING) aim
+from day02_part2_v2
+order by step;
+
+create or replace view day02_part2_v3 as
+select step
+  , forward
+  , sum(aim_delta) over (order by step RANGE UNBOUNDED PRECEDING) aim
+from day02_part2_v2
+;
+select * from day02_part2_v3 ;
+
+select step
+  , forward
+  , aim
+  , sum(forward) over (order by step RANGE UNBOUNDED PRECEDING) x
+  , sum(forward*aim) over (order by step RANGE UNBOUNDED PRECEDING) y
+from day02_part2_v3;
+
+create or replace view day02_part2_v4 as
+select step
+  , forward
+  , aim
+  , sum(forward) over (order by step RANGE UNBOUNDED PRECEDING) x
+  , sum(forward*aim) over (order by step RANGE UNBOUNDED PRECEDING) y
+  , sum(forward) over (order by step RANGE UNBOUNDED PRECEDING)
+  * sum(forward*aim) over (order by step RANGE UNBOUNDED PRECEDING) answer
+from day02_part2_v3;
+
+select * from day02_part2_v4 where step = (select max(step) from day02_part2_v4);

@@ -1,0 +1,72 @@
+-- pulling straight from example
+select * from day02_part1 order by lineno;
+
+create view day02_part1_v1 as
+select
+  lineno
+  , substr(linevalue,1,a-1) direction
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_part1
+)
+/
+
+select * from day02_part1_v1;
+
+create or replace view day02_part1_v2 as
+select decode(direction,'forward',distance,0) x
+  , decode(direction,'down',distance,'up',-distance,0) y
+from day02_part1_v1
+;
+select * from day02_part1_v2;
+
+select sum(x) horizontal, sum(y) depth, sum(x)*sum(y) answer
+from day02_part1_v2;
+--HORIZONTAL	DEPTH	ANSWER
+--1832	1082	1982224
+-- too high
+-- hmm, looks like input isn't right
+-- ha! I copied input example code and didn't pull out the example inserts. boo!
+
+-- corrected input and now produces correct output
+-- well, I added create or replace view...
+
+
+
+
+
+
+-- pulling straight from example
+select * from day02_part1 order by lineno;
+
+create or replace view day02_part1_v1 as
+select
+  lineno
+  , substr(linevalue,1,a-1) direction
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_part1
+)
+/
+
+select * from day02_part1_v1;
+
+create or replace view day02_part1_v2 as
+select decode(direction,'forward',distance,0) x
+  , decode(direction,'down',distance,'up',-distance,0) y
+from day02_part1_v1
+;
+select * from day02_part1_v2;
+
+select sum(x) horizontal, sum(y) depth, sum(x)*sum(y) answer
+from day02_part1_v2;
+--HORIZONTAL	DEPTH	ANSWER
+--1817	1072	1947824
+-- correct
+
+
+-- hmm, looking back, x and y should have been delta_x and delta_y
+
+

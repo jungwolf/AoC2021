@@ -1,0 +1,49 @@
+select * from day02_example order by lineno;
+
+select lineno, substr(linevalue,1,50) direction
+from day02_example;
+
+select lineno, linevalue, instr(linevalue,' ') a
+from day02_example;
+
+select
+  lineno
+  , substr(linevalue,1,a-1) direction
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_example
+)
+/
+
+
+create view day02_example_v1 as
+select
+  lineno
+  , substr(linevalue,1,a-1) direction
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_example
+)
+/
+
+select * from day02_example_v1;
+
+select decode(direction,'forward',distance,0) horizontal
+  , decode(direction,'down',distance,'up',-distance,0) depth
+from day02_example_v1
+;
+
+create or replace view day02_example_v2 as
+select decode(direction,'forward',distance,0) x
+  , decode(direction,'down',distance,'up',-distance,0) y
+from day02_example_v
+;
+select * from day02_example_v2;
+
+select sum(x) horizontal, sum(y) depth, sum(x)*sum(y) answer
+from day02_example_v2;
+--HORIZONTAL	DEPTH	ANSWER
+--15	10	150
+-- matches example
