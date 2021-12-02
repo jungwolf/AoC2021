@@ -1,0 +1,13 @@
+drop table day02_example;
+drop sequence day02_line_sq;
+create table day02_example (lineno number, linevalue varchar2(4000));
+create sequence day02_line_sq;
+
+insert into day02_example (lineno, linevalue) values (day02_line_sq.nextval,'forward 5');
+insert into day02_example (lineno, linevalue) values (day02_line_sq.nextval,'down 5');
+insert into day02_example (lineno, linevalue) values (day02_line_sq.nextval,'forward 8');
+insert into day02_example (lineno, linevalue) values (day02_line_sq.nextval,'up 3');
+insert into day02_example (lineno, linevalue) values (day02_line_sq.nextval,'down 8');
+insert into day02_example (lineno, linevalue) values (day02_line_sq.nextval,'forward 2');
+commit;
+select * from day02_example order by lineno;
