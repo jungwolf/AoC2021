@@ -8,3 +8,4 @@ I'll put some amount of explaination of my solution in each day's README.md file
 | Day | Title/link to puzzle | Comment/link to my code |
 |---|---|---|
 | 01 | [Sonar Sweep](https://adventofcode.com/2021/day/1) | [Analytic functions all the way.](https://github.com/jungwolf/AoC2021/tree/main/Day01)|
+| 02 | [Dive!](https://adventofcode.com/2021/day/2) | [Yet more Analytic functions.](https://github.com/jungwolf/AoC2021/tree/main/Day02)|
