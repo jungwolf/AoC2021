@@ -87,8 +87,8 @@ up X decreases your aim by X units.
 forward X does two things:
 It increases your horizontal position by X units.
 It increases your depth by your aim multiplied by X.
-#### Parse it
-The view does the same thing as part1. I'm changing the name anyway. Also changing direction to command. Distance isn't quite right, but I don't have a better name.
+#### Parse it, again.
+The view does the same thing as part1. I'm changing the name to keep the naming convention. Also changing direction to command. Distance isn't quite right, but I don't have a better name.
 ```sql
 create or replace view day02_part2_v1 as
 select
@@ -102,7 +102,6 @@ from (
 /
 ```
 
-#### Work the problem.
 I know I want to split out the forward command from the up/down command. This is the same logic from part1, with different names.
 ```sql
 create or replace view day02_part2_v2 as
@@ -113,3 +112,4 @@ from day02_part2_v1
 ;
 ```
 
+#### Work the problem.
