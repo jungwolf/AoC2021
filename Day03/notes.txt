@@ -1,0 +1,202 @@
+change to linevalue to varchar2(3000) if want to make an index
+
+
+
+select * from day03_example order by lineno;
+/*
+LINENO	LINEVALUE
+1	00100
+2	11110
+3	10110
+4	10111
+5	10101
+6	01111
+7	00111
+8	11100
+9	10000
+10	11001
+11	00010
+12	01010
+*/
+
+-- let's see if the small test works on the example set
+
+create or replace view d03_example2_v1 as
+with t (lineno, position, linevalue, digit, remainder) as (
+select lineno, 1 position, linevalue, substr(linevalue,1,1) digit, substr(linevalue,2) remainder from day03_example
+union all
+select lineno, position+1 , linevalue, substr(remainder,1,1) digit, substr(remainder,2) remainder from t
+where remainder is not null
+)
+select * from t
+;
+
+-- look at it from the position point of view
+select * from d03_example2_v1 order by position, lineno;
+
+-- well, time to get analytical again
+
+select lineno,position,linevalue,digit,remainder
+--  , ntile(2) over (partition by position order by digit) digit_rank
+  , median(to_number(digit)) over (partition by position)       digit_rank
+from d03_example2_v1
+order by position, digit_rank;
+
+create or replace view d03_example2_v2 as
+select lineno,position,linevalue,digit,remainder
+--  , ntile(2) over (partition by position order by digit) digit_rank
+  , median(to_number(digit)) over (partition by position)       digit_rank
+from d03_example2_v1
+;
+select * from d03_example2_v2;
+select * from d03_example2_v2 where digit=digit_rank;
+
+
+create or replace view d03_example2_v1 as
+with t (lineno, position, linevalue, digit) as (
+select lineno, 1 position, linevalue, substr(linevalue,1,1) digit from day03_example
+union all
+select lineno, position+1 , linevalue, substr(linevalue,position+1,1) digit from t
+where substr(linevalue,position+1,1) is not null
+)
+select lineno, position,linevalue, to_number(digit) value from t
+--order by position
+;
+select * from d03_example2_v1
+order by position
+;
+
+select lineno, position, linevalue, value, median(value) over (partition by position) median_value
+from d03_example2_v1
+order by position
+;
+
+with t (lineno, position, linevalue, digit, median_value) as (
+select lineno
+  , 1 position
+  , linevalue
+  , to_number(substr(linevalue,1,1)) digit
+  , median(to_number(substr(linevalue,1,1))) over (partition by 1) median_value
+from day03_example
+union all
+select lineno
+  , position+1
+  , linevalue
+  , to_number(substr(linevalue,position+1,1)) digit
+  , median(to_number(substr(linevalue,1,1))) over (partition by position) median_value
+from t
+where substr(linevalue,position+1,1) is not null
+  and median_value=digit
+)
+select lineno, position,linevalue, to_number(digit) value, median_value from t
+order by position, lineno;
+
+
+select lineno
+  , 1 position
+  , linevalue
+  , to_number(substr(linevalue,1,1)) digit
+  , substr(linevalue,1,1) p1
+  , substr(linevalue,2) p2
+from day03_example
+;
+with t (lineno, position, linevalue, digit, p1, p2 ) as (
+select lineno
+  , 1 position
+  , linevalue
+  , substr(linevalue,1,1) p1
+  , to_number(substr(linevalue,1,1)) digit
+  , substr(linevalue,2) p2
+from day03_example
+union all
+select lineno
+  , position+1
+  , linevalue
+  , substr(linevalue,1,position) p1
+  , to_number(substr(linevalue,position+1,1)) digit
+  , substr(p2,2) p2
+from t
+where p2 is not null
+)
+select * from t;
+
+
+-- new approach
+-- function, both so it is recursive and i can call it with dual
+create or replace function d3f(position number, mask varchar2) return varchar2 is
+a varchar2(1);
+begin
+a:='a';
+return a;
+end;
+/
+select d3f(1,'a') from dual;
+
+
+create index day03_example_idx on day03_example(linevalue);
+
+create or replace procedure d3f(mask varchar2, position number, found_value varchar2) is
+  a varchar2(1);
+begin
+
+
+a:='a';
+end;
+/
+
+
+
+
+create index day03_example_idx on day03_example(linevalue);
+create or replace procedure d3f(mask varchar2, position number, found_value out varchar2) is
+  a varchar2(1);
+begin
+
+
+a:='a';
+end;
+/
+
+drop procedure d3f;
+
+create or replace function d3f(rating_type varchar2, mask varchar2) return varchar2 is
+  a varchar2(1);
+begin
+  a:=length(mask);
+  return a;
+end;
+/
+select d3f('a','aa') from dual;
+-- yay
+
+create or replace function d3f(rating_type varchar2, mask varchar2) return varchar2 is
+  a varchar2(1);
+  b number;
+  zeroes number;
+  ones number;
+begin
+  a:=length(mask);
+  select sum(decode(digit,'0',1,0)), sum(decode(digit,'1',1,0)) into zeroes, ones from (
+    select substr(linevalue,a,1) digit
+    from day03_example
+    where linevalue like nvl(mask,'%')||'%'
+  );
+
+  return zeroes;
+end;
+/
+select d3f('a',null) from dual;
+
+  select sum(decode(digit,'0',1,0)), sum(decode(digit,'1',1,0)) from (
+    select substr(linevalue,0,1) digit
+    from day03_example
+    where linevalue like nvl(null,'%')||'%'
+  );
+
+select digit  from (
+    select substr(linevalue,0,1) digit, count(*) the_count
+    from day03_example
+    where linevalue like nvl(null,'%')||'%'
+    group by substr(linevalue,0,1)
+) order by the_count fetch first 1 rows only
+/
