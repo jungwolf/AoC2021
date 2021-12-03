@@ -1,7 +1,7 @@
 # Day 02 - Tracking state
 ## A word on state.
 ### Sets, kind of, don't take my word for it
-(Relational databases)[https://en.wikipedia.org/wiki/Relational_database] are modeled on relational algebra. There's a lot of set theory in there. However, RDBMS are created with commercial intent. Oracle is exceedingly happy to break theory if it'll attract more customers. Still, theory let's one prove correctness, some companies like that, and SQL started with set manipulation as a guiding principle.
+[Relational databases](https://en.wikipedia.org/wiki/Relational_database) are modeled on relational algebra. There's a lot of set theory in there. However, RDBMS are created with commercial intent. Oracle is exceedingly happy to break theory if it'll attract more customers. Still, theory let's one prove correctness, some companies like that, and SQL started with set manipulation as a guiding principle.
 
 SQL was also created with an eye towards describing the solution to get an answer instead of defining the algorithm to find the answer. "What are the employee details for Bob?" "What is the total cost for this order?" "Who works in this department?" Most importantly, "If somebody works for marketing, lower their salary by 10%." Easy things to write in SQL. Other things, not so easy.
 
