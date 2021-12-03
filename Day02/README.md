@@ -17,7 +17,25 @@ They are still set-ish in behavior. A procedural languange let's you grab a valu
 
 ## Where I stop ruminating and get to the puzzle on hand
 ### Part1
-I create a table to hold the puzzle input. Using sqlldr or an external table is more frustrating than helpful, for various reasons.
+#### Puzzle description
+It seems like the submarine can take a series of commands like forward 1, down 2, or up 3:
+
+forward X increases the horizontal position by X units.
+down X increases the depth by X units.
+up X decreases the depth by X units.
+Note that since you're on a submarine, down and up affect your depth, and so they have the opposite result of what you might expect.
+
+The submarine seems to already have a planned course (your puzzle input). You should probably figure out where it's going. For example:
+forward 5
+down 5
+forward 8
+up 3
+down 8
+forward 2
+Your horizontal position and depth both start at 0. 
+
+#### Parse the input
+I create tables to hold  puzzle input. Using sqlldr or an external table is more frustrating than helpful, for various reasons. Since tables are sets, lineno preserves the ordered property of a sequencial text file.
 ```sql
 create table day02_part1 (lineno number, linevalue varchar2(4000));
 create sequence day02_line_sq;
@@ -26,7 +44,7 @@ insert into day02_part1 (lineno, linevalue) values (day02_line_sq.nextval,'down 
 -- etc
 ```
 
-First order of business is parsing the input.
+First order of business is parsing the input. I need the direction and the distance, which are seperated by a space.
 ```sql
 create view day02_part1_v1 as
 select
@@ -39,4 +57,14 @@ from (
 )
 /
 ```
+The inline view gives me the location of the space. This makes the substr() calls a lot easier to read. to_number() gives the right type so I'm not dealing with fickle implicite type conversion.
 
+'forward' changes horizontal position. 'up'/'down' changes depth. These are delta values so I can add them up without regard to the order. I'll create a view to separate out the x/y values.
+```sql
+create or replace view day02_part1_v2 as
+select decode(direction, 'forward',distance, 0) x
+  , decode(direction, 'down',distance, 'up',-distance, 0) y
+from day02_part1_v1
+;
+```
+decode() is basically a case statement. In fact sql has a case statement, I'm just used to using decode. The syntax is decode(expression, search1,return1 \[search2,return2] \[default]). 
