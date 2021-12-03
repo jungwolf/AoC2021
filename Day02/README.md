@@ -13,7 +13,7 @@ SQL isn't a procedural language. It works on one or more sets of data and return
 ### Back to analytic functions.
 I think of analytic functions as a layer sitting on top of the core sql commands. You get this set and analytics lets you do processing on the set. They often allow you to generate a state-like column from row to row.
 
-They are still set-ish in behavior. A procedural languange let's you grab a value and twist it around``` to your will. Analytics are much more limited.
+They are still set-ish in behavior. A procedural languange let's you grab a value and twist it around to your will. Analytics are much more limited.
 
 ## Where I stop ruminating and get to the puzzle on hand
 ### Part1
@@ -78,3 +78,38 @@ from day02_part1_v2;
 ```
 No state, no problem. What a great segue into part2.
 ### Part 2
+#### Puzzle description
+In addition to horizontal position and depth, you'll also need to track a third value, aim, which also starts at 0.
+The commands also mean something entirely different than you first thought:
+
+down X increases your aim by X units.
+up X decreases your aim by X units.
+forward X does two things:
+It increases your horizontal position by X units.
+It increases your depth by your aim multiplied by X.
+#### Parse it
+The view does the same thing as part1. I'm changing the name anyway. Also changing direction to command. Distance isn't quite right, but I don't have a better name.
+```sql
+create or replace view day02_part2_v1 as
+select
+  lineno
+  , substr(linevalue,1,a-1) command
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_part1
+)
+/
+```
+
+#### Work the problem.
+I know I want to split out the forward command from the up/down command. This is the same logic from part1, with different names.
+```sql
+create or replace view day02_part2_v2 as
+select lineno step
+  , decode(command,'forward',distance,0) forward
+  , decode(command,'down',distance,'up',-distance,0) aim_delta
+from day02_part2_v1
+;
+```
+
