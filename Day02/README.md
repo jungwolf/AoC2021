@@ -160,26 +160,3 @@ The puzzle wants the answer for the last step.
 ```sql
 select x*y answer from day02_part2_v4 where step = (select max(step) from day02_part2_v4);
 ```
-## Performance
-The final sql takes 0.12 seconds to run after a few executions. That means the cursor has already been parsed and all of the data is in memory. That's on a production-like server. This is what is going on behind the scenes.
-```
-------------------------------------------------------------------------------------------------
-| Id  | Operation             | Name           | Rows  | Bytes |TempSpc| Cost (%CPU)| Time     |
-------------------------------------------------------------------------------------------------
-|   0 | SELECT STATEMENT      |                |       |       |       |   718 (100)|          |
-|*  1 |  VIEW                 | DAY02_PART2_V4 |  1000 | 39000 |       |   714   (1)| 00:00:01 |
-|   2 |   WINDOW BUFFER       |                |  1000 | 39000 |       |   714   (1)| 00:00:01 |
-|   3 |    VIEW               | DAY02_PART2_V3 |  1000 | 39000 |       |   714   (1)| 00:00:01 |
-|   4 |     WINDOW SORT       |                |  1000 |  1967K|  2004K|   714   (1)| 00:00:01 |
-|   5 |      TABLE ACCESS FULL| DAY02_PART1    |  1000 |  1967K|       |     4   (0)| 00:00:01 |
-|   6 |   SORT AGGREGATE      |                |     1 |    13 |       |            |          |
-|   7 |    TABLE ACCESS FULL  | DAY02_PART1    |  1000 | 13000 |       |     4   (0)| 00:00:01 |
-------------------------------------------------------------------------------------------------
-```
-The "select max(step) from day02_part2_v4" is doing a FTS so let's try something else.
-```sql
-select x*y answer from day02_part2_v4
-order by step desc fetch first 1 rows only;
-```
-
-
