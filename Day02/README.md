@@ -102,7 +102,7 @@ from (
 /
 ```
 
-I know I want to split out the forward command from the up/down command. This is the same logic from part1, with different names.
+I know I want to split out the forward command from the up/down command. This is the same logic from part1, with different names. Forward should probably have a different name, like displacement. What's in a name?
 ```sql
 create or replace view day02_part2_v2 as
 select lineno step
@@ -113,3 +113,22 @@ from day02_part2_v1
 ```
 
 #### Work the problem.
+I need to know the cumulative aim at each step which is perfect for an analytical function. I'm a woefully out-of-date C hacker, though, and sometimes my procedural prejudice peeks through. For example: take the last value of aim, add aim_delta, and now we have the current value of aim. Simple. Obviously a job for lag. This is where things go wrong.
+```sql
+select step
+  , forward
+  , aim_delta
+  , aim_delta + lag(aim,1,0) over (order by step) aim
+from day02_part2_v2
+order by step;
+```
+The column "aim" doesn't really exist yet. The column is the expression "aim_delta + lag(aim,1,0) over (order by step)" and "aim" is the name used after computation is complete and returning the full result set. If I want to use the value that is soon to be named "aim", I need to use the expression. So: aim_delta + lag(aim_delta + lag(aim,1,0) over (order by step),1,0) over (order by step). Ouch. Maybe this will work?
+```sql
+select step
+  , forward
+  , aim_delta
+  , aim_delta + lag(aim_delta,1,0) over (order by step) aim
+from day02_part2_v2
+order by step;
+```
+
