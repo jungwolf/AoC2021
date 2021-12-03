@@ -13,6 +13,30 @@ SQL isn't a procedural language. It works on one or more sets of data and return
 ### Back to analytic functions.
 I think of analytic functions as a layer sitting on top of the core sql commands. You get this set and analytics lets you do processing on the set. They often allow you to generate a state-like column from row to row.
 
-They are still set-ish in behavior. A procedural languange let's you grab a value and twist it around to your will. Analytics are much more limited.
+They are still set-ish in behavior. A procedural languange let's you grab a value and twist it around``` to your will. Analytics are much more limited.
 
-## Where I stop ruminating and get to the puzzle and hand.
+## Where I stop ruminating and get to the puzzle on hand
+### Part1
+I create a table to hold the puzzle input. Using sqlldr or an external table is more frustrating than helpful, for various reasons.
+```sql
+create table day02_part1 (lineno number, linevalue varchar2(4000));
+create sequence day02_line_sq;
+insert into day02_part1 (lineno, linevalue) values (day02_line_sq.nextval,'forward 1');
+insert into day02_part1 (lineno, linevalue) values (day02_line_sq.nextval,'down 5');
+-- etc
+```
+
+First order of business is parsing the input.
+```sql
+create view day02_part1_v1 as
+select
+  lineno
+  , substr(linevalue,1,a-1) direction
+  , to_number(substr(linevalue,a+1)) distance
+from (
+  select lineno, linevalue, instr(linevalue,' ') a
+  from day02_part1
+)
+/
+```
+
