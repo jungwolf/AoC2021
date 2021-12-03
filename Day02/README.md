@@ -58,7 +58,7 @@ from (
 /
 ```
 The inline view gives me the location of the space. This makes the substr() calls a lot easier to read. to_number() gives the right type so I'm not dealing with fickle implicite type conversion.
-
+#### Add it up
 'forward' changes horizontal position. 'up'/'down' changes depth. These are delta values so I can add them up without regard to the order. I'll create a view to separate out the x/y values.
 ```sql
 create or replace view day02_part1_v2 as
@@ -67,4 +67,14 @@ select decode(direction, 'forward',distance, 0) x
 from day02_part1_v1
 ;
 ```
-decode() is basically a case statement. In fact sql has a case statement, I'm just used to using decode. The syntax is decode(expression, search1,return1 \[search2,return2] \[default]). 
+decode() is basically a case statement. In fact sql has a case statement, I'm just used to using decode. The syntax is decode(expression, search1,return1 \[,search2,return2] \[,default]). It returns the first match, default if it is defined, or a null.
+
+Each row gives a 0,value or value,0. I'm not trying to preserve rows so I'm okay with that.
+
+Time to get the answer.
+```sql
+select sum(x) horizontal, sum(y) depth, sum(x)*sum(y) answer
+from day02_part1_v2;
+```
+No state, no problem. What a great segue into part2.
+### Part 2
