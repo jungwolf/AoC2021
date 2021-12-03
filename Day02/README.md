@@ -112,7 +112,7 @@ from day02_part2_v1
 ;
 ```
 
-#### Work the problem.
+#### procedural fail
 I need to know the cumulative aim at each step which is perfect for an analytical function. I'm a woefully out-of-date C hacker, though, and sometimes my procedural prejudice peeks through. For example: take the last value of aim, add aim_delta, and now we have the current value of aim. Simple. Obviously a job for lag. This is where things go wrong.
 ```sql
 select step
@@ -131,4 +131,32 @@ select step
 from day02_part2_v2
 order by step;
 ```
+No. That's "aim_delta plus previous aim_delta", just two steps. I need **everything** prevous.
+#### sum for the win
+Everything means sum. So here it is:
+```sql
+create or replace view day02_part2_v3 as
+select step
+  , forward
+  , sum(aim_delta) over (order by step range unbounded preceding) aim
+from day02_part2_v2
+;
+```
+Each step row adds up all the previous steps' aim_delta (range unbounded preceding). That's logically correct. I really hope the Oracle optimizer isn't doing a naive implementation.
+
+At this point I know forward and aim for every step. Depth change is forward * aim. For a step, the sum of current and all previous forward values gives me the total horizonal movement at that step. The sum of current and all previous (forward\*aim) values gives me the total depth movement. So here we go.
+```sql
+create or replace view day02_part2_v4 as
+select step
+  , forward
+  , aim
+  , sum(forward) over (order by step range unbounded preceding) x
+  , sum(forward*aim) over (order by step range unbounded preceding) y
+from day02_part2_v3;
+```
+The puzzle wants the answer for the last step.
+```sql
+select x*y answer from day02_part2_v4 where step = (select max(step) from day02_part2_v4);
+```
+
 
