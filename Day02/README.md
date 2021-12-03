@@ -69,7 +69,7 @@ from day02_part1_v1
 ```
 decode() is basically a case statement. In fact sql has a case statement, I'm just used to using decode. The syntax is decode(expression, search1,return1 \[,search2,return2] \[,default]). It returns the first match, default if it is defined, or a null.
 
-Each row gives a 0,value or value,0. I'm not trying to preserve rows so I'm okay with that.
+Each row gives a 0,value or value,0. I'm can use all the rows I need so I'm fine with it.
 
 Time to get the answer.
 ```sql
