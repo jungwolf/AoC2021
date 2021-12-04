@@ -1,4 +1,3 @@
--- git test
 -- let's try something smaller
 drop table d03_test;
 drop sequence day03_line_sq;
