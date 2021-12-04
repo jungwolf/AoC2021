@@ -1,4 +1,4 @@
-change to linevalue to varchar2(3000) if want to make an index
+--change to linevalue to varchar2(3000) if want to make an index
 
 
 
