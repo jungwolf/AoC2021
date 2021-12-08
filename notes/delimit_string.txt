@@ -93,3 +93,10 @@ ID	VALUE	COLUMN_VALUE
 2	C,D,E	C
 2	C,D,E	D
 2	C,D,E	E
+
+
+-- one way to get the output in order?
+select *
+from comma_test c
+  ,lateral(select column_value x, rownum ccc from table(select f_convert2(c.value) b from dual)) f
+/
