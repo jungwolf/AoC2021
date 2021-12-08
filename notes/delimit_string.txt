@@ -100,3 +100,8 @@ select *
 from comma_test c
   ,lateral(select column_value x, rownum ccc from table(select f_convert2(c.value) b from dual)) f
 /
+-- The PIPE ROW behavior most likely matches the implementation behavior to the desired logical behavior.
+-- but that's not safe. 
+
+-- so should probably convert the type to an object type with something like id or order_num etc.
+-- a la https://oracle-base.com/articles/misc/pipelined-table-functions
