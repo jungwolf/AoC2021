@@ -1,3 +1,6 @@
+-- such a common task yet takes a lot of code to do
+
+
 -- long recursive view
 WITH test_data ( delimited_string ) AS (
   SELECT '1,2,40,-5,72' FROM DUAL
@@ -105,3 +108,7 @@ from comma_test c
 
 -- so should probably convert the type to an object type with something like id or order_num etc.
 -- a la https://oracle-base.com/articles/misc/pipelined-table-functions
+
+
+-- another example of delimiting strings, this time with sql macros
+-- https://blogs.oracle.com/sql/post/split-comma-separated-values-into-rows-in-oracle-database
