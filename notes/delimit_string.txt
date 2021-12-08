@@ -68,3 +68,28 @@ CCC
 D
 
 4 rows selected.
+
+
+
+-- another test
+drop table comma_test;
+create table comma_test (id number, value varchar2(10));
+insert into comma_test values (1,'A,B');
+insert into comma_test values (2,'C,D,E');
+commit;
+select * from comma_test;
+
+select id, f_convert2(value)
+from comma_test;
+
+select *
+from comma_test c
+  ,table((select f_convert2(c.value) b from dual)) f
+/
+
+ID	VALUE	COLUMN_VALUE
+1	A,B	A
+1	A,B	B
+2	C,D,E	C
+2	C,D,E	D
+2	C,D,E	E
