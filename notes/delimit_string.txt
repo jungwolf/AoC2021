@@ -84,7 +84,7 @@ from comma_test;
 
 select *
 from comma_test c
-  ,table((select f_convert2(c.value) b from dual)) f
+  ,table(select f_convert2(c.value) b from dual) f
 /
 
 ID	VALUE	COLUMN_VALUE
