@@ -1,0 +1,35 @@
+You quickly make a list of the horizontal position of each crab (your puzzle input). Crab submarines have limited fuel, so you need to find a way to make all of their horizontal positions match while requiring them to spend as little fuel as possible.
+
+For example, consider the following horizontal positions:
+
+16,1,2,0,4,2,7,1,2,14
+This means there's a crab with horizontal position 16, a crab with horizontal position 1, and so on.
+
+Each change of 1 step in horizontal position of a single crab costs 1 fuel. You could choose any horizontal position to align them all on, but the one that costs the least fuel is horizontal position 2:
+
+Move from 16 to 2: 14 fuel
+Move from 1 to 2: 1 fuel
+Move from 2 to 2: 0 fuel
+Move from 0 to 2: 2 fuel
+Move from 4 to 2: 2 fuel
+Move from 2 to 2: 0 fuel
+Move from 7 to 2: 5 fuel
+Move from 1 to 2: 1 fuel
+Move from 2 to 2: 0 fuel
+Move from 14 to 2: 12 fuel
+This costs a total of 37 fuel. This is the cheapest possible outcome; more expensive outcomes include aligning at position 1 (41 fuel), position 3 (39 fuel), or position 10 (71 fuel).
+
+
+Like last time I'll count up the number of crabs in a state (position this time). 
+Last time I worked with fixed columns because the number of states was limited (0-8).
+The number of states makes that approach cumbersome and maybe not possible, depending on how many states there are.
+Instead of one row of (s1count,s2count,s3count,...), I'll break it down another level to state number of rows of (position,count).
+
+The idea is to search through all positions min(state) to max(state) and compute the total fuel used.
+I think there may be local minima, if you graph out (position, cost).
+If so, gradiant search or binary sectioning won't always give the right answer.
+
+rough idea:
+generate rows for cadidates min(position) to max(position)
+join to input table, sum up abs(position-candidate)*count
+output minimum
