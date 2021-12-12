@@ -3,6 +3,49 @@ https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#emphasis
 -- don't know why these are not working correctly
 -- wait, maybe a bug in the version I ran it on? seems to work okay with Oracle Live Sql...
 
+-- so this is working as an answer to the example
+with t (r0,r1,r2,r3,r4,r5,r6,r7,r8,sumall,lvl) as (
+    select
+--      0 r0, 1 r1, 1 r2, 2 r3, 1 r4, 0 r5, 0 r6, 0 r7, 0 r8
+      0 r0, 1 r1, 1 r2, 2 r3, 1 r4, 0 r5, 0 r6, 0 r7, 0 r8, 1+1+2+1 sumall
+      , 0 lvl
+    from dual
+    union all
+    select
+	  r1, r2, r3, r4, r5, r6, r7+r0, r8, r0
+	, r1+r2+r3+r4+r5+r6+r7+r0+r8+r0
+	, lvl+1
+    from t
+    where lvl < 100
+)
+select * from t
+where lvl = 80
+/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 with t (r0,r1,r2,r3,r4,r5,r6,r7,r8,lvl) as (
     select
