@@ -1,6 +1,7 @@
 https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#emphasis
 
 -- don't know why these are not working correctly
+-- wait, maybe a bug in the version I ran it on? seems to work okay with Oracle Live Sql...
 
 
 with t (r0,r1,r2,r3,r4,r5,r6,r7,r8,lvl) as (
