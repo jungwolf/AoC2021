@@ -31,8 +31,8 @@ dbms_output.put_line('a:'||a||' an:'||an);
     else
 	 -- do all the work on the pop
  	 an := instr(closers,a);
-      b := substr(stack,1,1);
-      stack := substr(stack,2);
+      b := substr(stack,-1,1);
+      stack := substr(stack,1,length(stack)-1);
       bn := instr(openers,b);
 dbms_output.put_line('b:'||b||' bn:'||bn||' a:'||a||' an:'||an);
       if an != bn or bn is null then
@@ -48,5 +48,10 @@ end;
 /
 
 select find_first_bad_closer('[]') from dual;
-select find_first_bad_closer('[]}') from dual;
-select find_first_bad_closer('[][[])]') from dual;
+select find_first_bad_closer('[]>') from dual;
+select find_first_bad_closer('[>]') from dual;
+
+select * from day10_example;
+select linevalue, find_first_bad_closer(linevalue) from day10_example;
+select linevalue, find_first_bad_closer(linevalue) from day10_example
+where lineno = 1;
