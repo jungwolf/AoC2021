@@ -55,3 +55,19 @@ select * from day10_example;
 select linevalue, find_first_bad_closer(linevalue) from day10_example;
 select linevalue, find_first_bad_closer(linevalue) from day10_example
 where lineno = 1;
+
+/*
+select 
+  linevalue
+  , find_first_bad_closer(linevalue) 
+  , decode(find_first_bad_closer(linevalue), ')',3, ']',57, '}',1197, '>',25137, 0)
+from day10_example;
+*/
+
+select sum(errcodes) from (
+select 
+  linevalue
+  , find_first_bad_closer(linevalue) 
+  , decode(find_first_bad_closer(linevalue), ')',3, ']',57, '}',1197, '>',25137, 0) errcodes
+from day10_example
+);
