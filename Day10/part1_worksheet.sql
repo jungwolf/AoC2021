@@ -64,6 +64,6 @@ select
   linevalue
   , find_first_bad_closer(linevalue) 
   , decode(find_first_bad_closer(linevalue), ')',3, ']',57, '}',1197, '>',25137, 0) errcodes
-from day10_part
+from day10_part1
 );
 
