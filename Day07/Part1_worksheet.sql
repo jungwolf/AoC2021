@@ -81,11 +81,17 @@ with minmax as (select min(item) minvalue, max(item) maxvalue from day07_part1_v
 	where destination<maxposition
 	)
 select destination, item position, the_count from t,day07_part1_v2;
-select * from day07_part1_v3;
 
-select destination, position, the_count, abs(destination-position)*the_count fuel from day07_part1_v3;
+-- these generate a lot of rows, don't run them as-is
+-- add "where rownum < 100" or similar
+--select * from day07_part1_v3;
+--select destination, position, the_count, abs(destination-position)*the_count fuel from day07_part1_v3;
+
+-- not a problem because it limits output to just one row
+-- without the fetch limit is still only outputs around 2k rows
 
 select destination, sum(abs(destination-position)*the_count) fuel 
 from day07_part1_v3
 group by destination
-order by fuel ;
+order by fuel fetch first 1 rows only;
+
