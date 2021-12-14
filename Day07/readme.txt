@@ -63,8 +63,31 @@ with minmax as (select min(item) minvalue, max(item) maxvalue from day07_part1_v
 , t (destination,maxposition) as (
     select minvalue destination, maxvalue maxposition from minmax
     union all
-	select destination+1, maxposition from t
-	where destination<maxposition
-	)
+    select destination+1, maxposition from t
+    where destination<maxposition
+  )
 select destination, item position, the_count from t,day07_part1_v2;
+-- The recursive query needs to know when to stop. It's clunky, but returning the maxposition on each generated row allows the destination<maxposition exit state.
+-- I put together two steps into the one view.
+-- select ... from t, day07_part1_v2; combines the destination row generator with the crab positions.
+-- It generates destinations*positions rows. That's fine, but it can take a long time to display to your client. 
+
+-- Finally, sum up the cost in fuel for each crab moving to the destination.
+select destination, sum(abs(destination-position)*the_count) fuel 
+from day07_part1_v3
+group by destination
+order by fuel fetch first 1 rows only;
+-- "fetch first 1 rows only" orders the output and limits the output to 1 row.
+-- Because min fuel is the first row, that's the answer.
+-- This assumes only 1 destination.
+
+
+-- Part2 changes the fuel cost function.
+-- abs(destination-position)*(abs(destination-position)+1)/2
+--   basically, 0+1+2+3... = n*(n+1)/2
+
+select destination, sum(abs(destination-position)*(abs(destination-position)+1)/2*the_count) fuel 
+from day07_part1_v3
+group by destination
+order by fuel fetch first 1 rows only;
 
