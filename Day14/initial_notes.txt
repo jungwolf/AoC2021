@@ -1,0 +1,42 @@
+Problem is to generate a new string based on transfermation rules of the old string.
+For each pair in the string, lookup the pair in the rules and insert the resulting character between the pair.
+Look at all pairs, the inserts happen after each pair has been considered.
+
+---
+Here is the problem text:
+NNCB
+
+CH -> B
+HH -> N
+CB -> H
+NH -> C
+HB -> C
+HC -> B
+HN -> C
+NN -> C
+BH -> H
+NC -> B
+NB -> B
+BN -> B
+BB -> N
+BC -> B
+CC -> N
+CN -> C
+The first line is the polymer template - this is the starting point of the process.
+
+The following section defines the pair insertion rules. A rule like AB -> C means that when elements A and B are immediately adjacent, element C should be inserted between them. These insertions all happen simultaneously.
+
+So, starting with the polymer template NNCB, the first step simultaneously considers all three pairs:
+
+The first pair (NN) matches the rule NN -> C, so element C is inserted between the first N and the second N.
+The second pair (NC) matches the rule NC -> B, so element B is inserted between the N and the C.
+The third pair (CB) matches the rule CB -> H, so element H is inserted between the C and the B.
+Note that these pairs overlap: the second element of one pair is the first element of the next pair. Also, because all pairs are considered simultaneously, inserted elements are not considered to be part of a pair until the next step.
+
+----
+One thing to notice is the the next string can be constructed as I scan through the original string.
+Current pair NN, new string is N+lookup value, or NC. Next pair is NC, so string is NCN+lookup, or NCNB, etc.
+Eventually next pair is X(eol) so just add X. Next pair is null, so stop.
+
+If l is the lenght of the current string, lenght of next string is l + (l-1), or 2l-1. Hmm, next string is (2l-1)+(2l-1)-1, or 4l-3.
+
