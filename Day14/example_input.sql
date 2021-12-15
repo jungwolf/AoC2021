@@ -1,0 +1,24 @@
+drop table day14_example;
+drop sequence day14_line_sq;
+create table day14_example (lineno number, linevalue varchar2(4000));
+create sequence day14_line_sq;
+
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'NNCB');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'CH -> B');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'HH -> N');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'CB -> H');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'NH -> C');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'HB -> C');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'HC -> B');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'HN -> C');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'NN -> C');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'BH -> H');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'NC -> B');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'NB -> B');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'BN -> B');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'BB -> N');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'BC -> B');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'CC -> N');
+insert into day14_example (lineno, linevalue) values (day14_line_sq.nextval,'CN -> C');
+commit;
