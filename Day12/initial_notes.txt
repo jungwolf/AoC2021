@@ -1,0 +1,7 @@
+how about (from, to, fromonce) where fromonce is 0 for bigs and 1 for small
+some idea about using sum(fromonce)>0 as a limit for small caves
+hmm, big1 -> big2 is fine, but big2 back to big1 seems suspect
+  not an issue, example and part1 don't have big to big links
+
+recursive queries are an extention of hierarchical queries, so seem like a good fit.
+avoid cycles...
