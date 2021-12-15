@@ -38,18 +38,15 @@ begin
   
 end;
 /
-select * from table(select string2rows('aaa,bbb',',') from dual);
-select * from table(select string2rows('aaa,bbb') from dual);
-
-select * from table(select string2rows('a,b,c,d,e',',') from dual);
-select * from table(select string2rows('a,b,c,,e',',') from dual);
-select * from table(select string2rows(',a,b,c,,,e',',') from dual);
-select * from table(select string2rows(',a,b,c,,e,',',') from dual);
+select * from table(string2rows('a,b,c,d,e',','));
+select * from table(string2rows('a,b,c,,e',','));
+select * from table(string2rows(',a,b,c,,,e',','));
+select * from table(string2rows(',a,b,c,,e,',','));
 -- has final null row
-select * from table(select string2rows(null,',') from dual);
+select * from table(string2rows(null,','));
 -- null row (I think I want that behavior)
-select * from table(select string2rows(',a,b,c,,,e',null) from dual);
--- works!
+select * from table(string2rows(',a,b,c,,,e,',null));
+
 
 -- column name from a table() operation is column_value
 -- example joining the new table output to the row of a source table
