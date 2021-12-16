@@ -105,3 +105,5 @@ insert into day14_part1 (lineno, linevalue) values (day14_line_sq.nextval,'KH ->
 insert into day14_part1 (lineno, linevalue) values (day14_line_sq.nextval,'HP -> V');
 insert into day14_part1 (lineno, linevalue) values (day14_line_sq.nextval,'OC -> V');
 insert into day14_part1 (lineno, linevalue) values (day14_line_sq.nextval,'HK -> F');
+commit;
+select * from day14_part1;
