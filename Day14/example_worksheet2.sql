@@ -67,5 +67,37 @@ begin
   commit;
 end;
 /
+
 exec day14_process_polymer(10);
+
 select * from day14_polymer_template_t;
+-- the output is very long
+
+select column_value, count(*) 
+from table(select string2rows(template) from day14_polymer_template_t) 
+group by column_value;
+/*
+B	1749
+C	298
+H	161
+N	865
+*/
+select column_value
+  ,the_count
+  ,min(the_count) over () first
+  ,max(the_count) over () last
+  , max(the_count) over () - min(the_count) over () diff 
+from ( 
+select column_value, count(*) the_count
+from table(select string2rows(template) from day14_polymer_template_t) 
+group by column_value
+);
+
+/*
+B	1749	161	1749	1588
+C	298	161	1749	1588
+H	161	161	1749	1588
+N	865	161	1749	1588
+*/
+-- 1588 it is
+
