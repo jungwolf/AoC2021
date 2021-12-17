@@ -1,0 +1,272 @@
+
+6.....5....4...3..2.10........................................
+...............................................................
+...............................................................
+...............................................................
+.................#.............................................
+....................TTTTTTTTTTT................................
+....................TTTTTTTTTTT................................
+....................TTTTTTTTTTT................................
+....................TTTTTTTTTTT................................
+....................TTTTTTTTTTT..#.............................
+....................TTTTTTTTTTT................................
+...............................................................
+...............................................................
+...............................................................
+..................................................
+
+-- origin 0,0
+-- pick velocity, vx and vy
+-- each step, add vx to x and vy to y
+--   then vx moves towards 0 by 1 (drag), vy = vy -1 (gravity)
+-- a step must land in the target square
+-- tx=20..30, ty=-10..-5
+-- find vx and vy that result in the highest y value while still making it into t
+
+So, let's get some terminology
+*** constants ***
+call origin O(ox,oy) -> assume O(0,0) 
+call initial velocity VPRIME, so VPRIME(ivx,ivy)
+*** variables ***
+call step S(t), where t increases by 1 for each step -> start t = 0
+call position at step S(t) as PSTEP(px,py,S(t))
+call velocity at step S(t) as VSTEP(vx,vy,S(t))
+
+for now, assume ivx and ivy are positive
+
+for any S(t) [VSTEP(vx,...,S(t))], vx = ivx + ivx-1 + ivx - 2 ... vx - t (until vx - t = 0)
+Or, VSTEP(vx,...,S(t+1)) = VSTEP(vx,...S(t)
+Or, given S(
+
+
+
+
+
+So, let's get some terminology
+*** constants ***
+call origin ox,oy -> assume O(0,0) 
+call initial velocity ivx,ivy
+*** variables ***
+call current step S(t), where t increases by 1 for each step -> start t = 0
+call position at step S(t) as px(t) and py(t)
+call velocity at step S(t) as vx(t) and vy(t)
+
+for now, assume ivx and ivy are positive
+
+-- check velosity
+ivx = 4
+S(0) -> t = 0, vx(0) = ivx = 4
+S(1) -> t = 1, vx(1) = 3
+S(2) -> t = 2, vx(2) = 2
+S(3) -> t = 3, vx(3) = 1
+S(4) -> t = 4, vx(4) = 0
+S(5) -> t = 4, vx(5) = 0
+...
+S(t) -> vx(t) = ivx - t :: (until t = ivx)
+
+-- similar
+S(t) -> vy(t) = ivy - t :: no limit
+
+-- check position
+S(0) -> t = 0, px(0) = 0
+S(1) -> t = 1, px(1) = vx(0)
+S(2) -> t = 2, px(2) = vx(0) + v(1)
+S(3) -> t = 3, px(3) = vx(0) + v(1) + v(2)
+S(4) -> t = 4, px(4) = vx(0) + v(1) + v(2) + v(3)
+S(5) -> t = 5, px(5) = vx(0) + v(1) + v(2) + v(3) + v(4)
+S(6) -> t = 6, px(6) = vx(0) + v(1) + v(2) + v(3) + v(4) + v(5)
+---
+S(0) -> t = 0, px(0) = 0
+S(1) -> t = 1, px(1) = 4
+S(2) -> t = 2, px(2) = 4 + 3 = 7
+S(3) -> t = 3, px(3) = 4 + 3 + 2 = 9
+S(4) -> t = 4, px(4) = 4 + 3 + 2 + 1 = 10
+S(5) -> t = 5, px(5) = 4 + 3 + 2 + 1 + 0 = 10
+S(6) -> t = 6, px(6) = 4 + 3 + 2 + 1 + 0 + 0 = 10
+---
+S(0) -> t = 0, px(0) = 0
+S(1) -> t = 1, px(1) = v(0)  ::: because vx(-1) is undefined, check general equation below
+S(t+1) -> px(t+1) = p(t) + v(t-1) :: until t = ivx
+--- new form
+S(t) -> vx(t) = ivx - t :: (until t = ivx)
+vx(t-1) = ivx - (t - 1) -> ivx-t+1
+
+px(t) = sum vx(0) to vx(t-1) -> sum of (ivx-0) to (ivx-t+1) -> (ivx+(ivx-t+1))/2*t -> (ivx*2+1-t)/2*t
+t2 -> 4 + 2 + 1 -> 7 -> 7/2*2 -> 7
+t3 -> 4 + 1 + 1 -> 6 -> 6/2*3 -> 9
+t4 -> 4 + 0 + 1 -> 5 -> 5/2*4 -> 10
+t2 -> ivx + (ivx-t) + 1 -> 4 + 4 - 2 + 1 -> 7/2*2 -> 7
+t3 -> ivx + (ivx-t) + 1 -> 4 + 4 - 3 + 1 -> 6/2*3 -> 9
+t3 -> ivx + (ivx-t) + 1 -> 4 + 4 - 4 + 1 -> 5/2*4 -> 10
+
+
+-- check, ivx = 4
+S(0) -> t = 0, px(0) = 0
+S(1) -> t = 1, px(1) = ivx -> 4
+S(2) -> t = 2, px(2) = (ivx*2-t+1)/2*t => (4*2-2+1)/2*t -> 7/2*2 -> 7
+S(3) -> t = 3, px(3) = (ivx*2-t+1)/2*t => (4*2-3+1)/2*3 -> 6/2*3 -> 9
+
+px(ivx)=(ivx*2+1-ivx)/2*ivx
+px(ivx)=(ivx+1)/2*ivx
+
+-- finally!
+px(0) = 0
+px(t)=(ivx*2+1-t)/2*t, while t>0 and t<ivx
+px(t)=(ivx+1)/2*ivx, while t>=ivx
+
+py(0) = 0
+py(t)=(ivy*2+1-t)/2*t, while t>0
+
+px(t)= ivx*2*t/2 +1*t/2 -t*t/2 , while t>0
+px(t)= ivx*t +(1/2)*t -(1/2)t*t , while t>0
+px(t)= (-1/2)t*t + (ivx + 0.5)*t , while t>0
+
+--also, interesting quadratic form
+px(t)=ivx*t+1/2*t-t*t/2, while t>0 and t<ivx
+px(t)= (-1/2)*t^2 + (ivx+0.5)*t + 0, while t>0 and t<ivx
+
+
+-- target
+-- tx=20..30, ty=-10..-5
+-- find vx and vy that result in the highest y value while still making it into t
+-- first, find t values where px(t) => txmin and px(t) <= txmax
+is px(ivx) < txmin? if so, no answer
+assume px(ivx) >= txmin
+so txmin <= (ivx+1)/2*ivx
+
+px(t)=(ivx*2+1-t)/2*t>=txmin
+
+-- try it, txmin=20, ivx=7
+t >= (20+2)/(7+1/2) = 22/7.5 = 2.933333333333333
+-- no, should have been 3.something to round up to 4
+
+px(0) = 0, not >= 20
+px(1) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*1 - 1^2/2 = 7.5  -  1/2 = 7.5  - 0.5  = 7
+px(2) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*2 - 2^2/2 = 15   -  4/2 = 15   - 2    = 13
+px(3) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*3 - 3^2/2 = 22.5 -  9/2 = 22.5 - 4.5  = 18
+px(4) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*4 - 4^2/2 = 30   - 16/2 = 30   - 8    = 22
+px(5) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*5 - 5^2/2 = 37.5 - 25/2 = 37.5 - 12.5 = 25
+px(6) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*6 - 6^2/2 = 45   - 36/2 = 45   - 18   = 27
+px(7) = (ivx*2+1-t)/2*t = (7*2+1-t)/2*t = (15-t)/2*t = 7.5*t - t^2/2 = 7.5*7 - 7^2/2 = 52.5 - 49/2 = 52.5 - 24.5 = 28
+
+px(1) = 7  >= 20? no
+px(2) = 13 >= 20? no
+px(3) = 18 >= 20? no
+px(4) = 22 >= 20? yes
+px(5) = 25 >= 20? yes
+px(6) = 27 >= 20? yes
+px(7) = 28 >= 20? yes
+
+-- try again
+-- txmin=20, ivx=7, t > 0
+assume px(ivx) >= txmin
+px(t)=(ivx*2+1-t)/2*t>=txmin
+-- when solve for t, then round up any fraction should be the first step that hits txmin
+(ivx*2+1-t)/2*t=txmin
+(ivx*2+1-t)*t=txmin*2
+2*ivx*t+1*t-t*t=txmin*2
+
+-t^2 + (2*ivx+1)t = txmin*2
+-t^2 + (2*ivx+1)t - txmin*2 = 0
+quadratic formula... 
+x = (-b +- sqrt(b^2 - 4ac))/2a
+a = -1
+b = 2*ivx+1
+c = txmin*2
+
+t = (-(2*ivx+1) +- sqrt((2*ivx+1)^2 - 4(-1)(txmin*2)))/2(-1)
+
+try it with ivx=7 and txmin = 20
+t = (-(2*7+1) +- sqrt((2*7+1)^2 - 4(-1)(20*2)))/2(-1)
+t = (-(14+1) +- sqrt((14+1)^2 - (-4)(40)))/(-2)
+t = (-(15) +- sqrt((15)^2 - (-160)))/(-2)
+t = (-(15) +- sqrt(225 + 160))/(-2)
+t = (-(15) +- 20.37)/(-2)
+t1 = (-(15) + 20.37)/(-2)
+t1 = (5.37)/(-2)
+t1 = -2.7ish
+
+t2 = (-(15) - 20.37)/(-2)
+t2 = (-(15) - 20.37)/(-2)
+t2 = (-35.37)/(-2)
+t2 = 17.685
+-- not even close
+
+
+
+-- verify quadratic form, ivx=7
+px(t)=ivx*t+1/2*t-t*t/2
+px(1) = ivx*t+1/2*t-t*t/2 = 7*1+1/2*1-1*1/2 = 7 +0.5-0.5  = 7
+px(2) = ivx*t+1/2*t-t*t/2 = 7*2+1/2*2-2*2/2 = 14+1  -2    = 13
+px(3) = ivx*t+1/2*t-t*t/2 = 7*3+1/2*3-3*3/2 = 21+1.5-4.5  = 18
+px(4) = ivx*t+1/2*t-t*t/2 = 7*4+1/2*4-4*4/2 = 28+2  -8    = 22
+px(5) = ivx*t+1/2*t-t*t/2 = 7*5+1/2*5-5*5/2 = 35+2.5-12.5 = 25
+px(6) = ivx*t+1/2*t-t*t/2 = 7*6+1/2*6-6*6/2 = 42+3  -18   = 27
+px(7) = ivx*t+1/2*t-t*t/2 = 7*7+1/2*7-7*7/2 = 49+3.5-24.5 = 28
+
+-- so?
+for what value of t does ivx*t+1/2*t-t*t/2 = txmin?
+u=ivx, w=txmin
+u*t+1/2*t-t*t/2 = w
+u*t+1/2*t-t*t/2 -w = 0
+-t*t/2 + u*t + 1/2*t -w = 0
+(-1/2)t*t + (u+1/2)t -w = 0
+
+quadratic formula... 
+x = (-b +- sqrt(b^2 - 4ac))/2a
+a = -1/2
+b = u+1/2
+c = w
+
+x = (-(u+1/2) +- sqrt( ((u+1/2)^2) - 4*(-1/2)*(w)) ) / (2*(-1/2))
+t = (-(ivx+1/2) +- sqrt( ((ivx+1/2)^2) - 4*(-1/2)*(txmin)) ) / (2*(-1/2))
+t = (-(ivx+1/2) +- sqrt( ((ivx+1/2)^2) + (2)*(txmin)) ) / (-1)
+t = (-ivx-1/2 +- sqrt( (ivx+1/2)^2 + (2)*(txmin)) ) / (-1)
+t = ivx+1/2 +- sqrt( (ivx+1/2)^2 + (2)*(txmin))
+
+try it with ivx=7 and txmin = 20
+t = (7+1/2 +- sqrt( (7+1/2)^2 + (2)*(20)) )
+t = (7.5 +- sqrt( (7.5)^2 + (40)) )
+t = (7.5 +- sqrt( 56.25 + (40)) )
+t = 7.5 +- sqrt( 96.25)
+t1 = 7.5 - 9.810708435174292 = -2.3...
+t2 = 7.5 + 9.810708435174292 = 17.3...
+
+
+
+-- verify quadratic form, ivx=7
+px(t)= (-1/2)t*t + (7 + 0.5)*t
+
+px(1)= (-1/2)1^2 + (7 + 0.5)*1 = (-1/2)1 + (7.5)*1  = -0.5  + (7.5)*1 = -0.5  + 7.5  = 7
+px(2)= (-1/2)2^2 + (7 + 0.5)*2 = (-1/2)4 + (7.5)*2  = -2    + (7.5)*2 = -2    + 15   = 13
+px(3)= (-1/2)3^2 + (7 + 0.5)*3 = (-1/2)9 + (7.5)*3  = -4.5  + (7.5)*3 = -4.5  + 22.5 = 18
+px(4)= (-1/2)4^2 + (7 + 0.5)*4 = (-1/2)16 + (7.5)*4 = -8    + (7.5)*4 = -8    + 30   = 22
+px(5)= (-1/2)5^2 + (7 + 0.5)*5 = (-1/2)25 + (7.5)*5 = -12.5 + (7.5)*5 = -12.5 + 37.5 = 25
+px(6)= (-1/2)6^2 + (7 + 0.5)*6 = (-1/2)36 + (7.5)*6 = -18   + (7.5)*6 = -18   + 45   = 27
+px(7)= (-1/2)7^2 + (7 + 0.5)*7 = (-1/2)49 + (7.5)*7 = -24.5 + (7.5)*7 = -24.5 + 52.5 = 28
+
+So now,
+20 = (-1/2)t*t + (7 + 0.5)*t
+20 = (-1/2)t*t + (7.5)*t
+(-1/2)t*t + (7.5)*t - 20 = 0
+t1 = 3.45... -> 4
+t2 = 11.53... (but 11-12 are out of bounds so no meaning)
+
+px(t)= (-1/2)t*t + (ivx + 0.5)*t , while t>0
+so, given that, what value of t gives px(t) = (-1/2)t*t + (ivx + 0.5)*t = txmin ?
+In theory, given the constant txmin, (-1/2)t*t + (ivx + 0.5)*t - txmin = 0, finding the roots should give the answer.
+So we should be able to use the quadratic equation
+t = (-1*(ivx + 0.5) +- sqrt( (ivx + 0.5)^2 - 2*txmin ) ) / -1
+  -- divide by -1, flips first term but +/- is now -/+, no different
+t = 1*(ivx + 0.5) +- sqrt( (ivx + 0.5)^2 - 2*txmin )
+
+-- can I finally do it? ivx=7, txmin=20
+t = 1*(ivx + 0.5) +- sqrt( (ivx + 0.5)^2 - 2*txmin )
+t = 1*(7 + 0.5) +- sqrt( (7 + 0.5)^2 - 2*20 )
+t = 7.5 +- sqrt( 56.25 - 40 )
+t = 7.5 +- sqrt( 16.25 )
+t = 7.5 +- 4.03...
+t1 = 7.5 - 4.03... = 3.46... (round up) 4
+t2 = 7.5 + 4.03... = 11.53... (out of bounds)
+
+-- yep, freaking sign error like in high school
