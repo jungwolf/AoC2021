@@ -1,0 +1,133 @@
+for now, assume ivx and ivy are positive
+*** constants ***
+call origin ox,oy -> assume O(0,0) 
+call initial velocity ivx,ivy
+*** variables ***
+call current step S(t), where t increases by 1 for each step -> start t = 0
+call position at step S(t) as px(t) and py(t)
+call velocity at step S(t) as vx(t) and vy(t)
+
+velocity formulas
+
+-- drag slows down velocity by 1 each step, until 0
+vx(t) = ivx - t, for t<ivx
+vx(t) = 0,       for t=>ivx
+
+-- gravity pulls down by 1 each step, no limit
+vy(t) = ivy - t
+
+-- positions at step t, derived using velocity equations and reduced to initial velocity values
+
+px(0) = 0
+px(t) = (ivx*2+1-t)/2*t, for t>0 and t<ivx
+px(t) = (ivx+1)/2*ivx,   for t>=ivx
+
+py(0) = 0
+py(t) = (ivy*2+1-t)/2*t
+py(t) = (-1/2)t*t + (ivy + 0.5)*t
+py(t) = (ivy + 0.5)*t - t*t/2
+
+
+
+
+-- sometimes we want to find out how many steps it takes to get to a target square
+-- yes, that is quadradic formula
+-- px has a max value, (ivx+1)/2*ivx, so any values greater than this, or less than 0, doesn't make sense
+t = ivx + 0.5 +- sqrt( (ivx + 0.5)^2 - 2*targetx )
+t = ivy + 0.5 +- sqrt( (ivy + 0.5)^2 - 2*targety )
+-- t is defined as an integer, so round down or up as needed
+
+-- we have a target square, defined by, for example, tx=20..30, ty=-10..-5
+-- or, txmin=20, txmax=30, tymin=-10, tymax=-5
+
+-- what initial velocities have a px(t),py(t) value in the square?
+-- of these velocities, which one has the highest py value?
+
+-- now, if we can assume there _is_ an answer, we don't have to actually find the value for x.
+-- x and y are independent, if there is a value of ivx that works, we'll use that.
+-- we do want to know ivy because working on it gives us the answer
+
+-- the key to the problem is steps are discrete. Otherwise we can go arbitrary high and still hit the box
+-- so, mindful of the gaps
+-- again, assume there is an answer. something is forcing ivy to have some maximum and then forcing anything high to miss the box
+-- hmm, once a probe hits vy(t) = 0, they all fall with the same gap pattern, offset by whatever py(t) they reached.
+
+-- start with py(0)=0 and ivy = 0. What values are covered?
+py(t) = (ivy + 0.5)*t - t*t/2
+py(t) = (0.5)*t - t*t/2
+py(0) = (0.5)*0 - 0^2/2 = 0   - 0/2  = 0   - 0/2  = 0
+py(1) = (0.5)*1 - 1^2/2 = 0.5 - 1/2  = 0.5 - 1/2  = 0
+py(2) = (0.5)*2 - 2^2/2 = 1   - 4/2  = 1   - 4/2  = -1
+py(3) = (0.5)*3 - 3^2/2 = 1.5 - 9/2  = 1.5 - 9/2  = -3
+py(4) = (0.5)*4 - 4^2/2 = 2   - 16/2 = 2   - 16/2 = -6
+py(5) = (0.5)*5 - 5^2/2 = 2.5 - 25/2 = 2.5 - 25/2 = -10
+py(6) = (0.5)*6 - 6^2/2 = 3   - 36/2 = 3   - 36/2 = -15
+py(7) = (0.5)*7 - 7^2/2 = 3.5 - 49/2 = 3.5 - 49/2 = -21
+py(8) = (0.5)*8 - 8^2/2 = 4   - 64/2 = 4   - 64/2 = -28
+py(9) = (0.5)*9 - 9^2/2 = 4.5 - 81/2 = 4.5 - 81/2 = -36
+py(10) = (0.5)*10 - 10^2/2 = 5 - 100/2 = 5 - 50 = -45
+
+the gaps going up match the gaps going down
+
+so, so many things are symetrical
+basically, the box can be y or -y, you shoot up and if it hits one, it'll also hit the other
+you want to hit the top edge
+ivy = abs(tymax)
+and max py should be when velocity has slowed down to 0, in tymax steps
+py(tymax) = (tymax + 0.5)*tymax - tymax^2/2, so let's see
+in the example, abs(tymax) = 10
+py(t) = (ivy + 0.5)*t - t^2/2
+py(1) =  (tymax + 0.5)*1 -  1^2/2 = (10 + 0.5)*1 - 1^2/2 = (10.5)*1 - 1/2  = 10.5 - 1/2  = 10.5 - 1/2  = 10
+py(2) =  (tymax + 0.5)*2 -  2^2/2 = (10 + 0.5)*2 - 2^2/2 = (10.5)*2 - 4/2  = 21   - 4/2  = 21   - 4/2  = 19
+py(3) =  (tymax + 0.5)*3 -  3^2/2 = (10 + 0.5)*3 - 3^2/2 = (10.5)*3 - 9/2  = 31.5 - 9/2  = 31.5 - 9/2  = 27
+py(4) =  (tymax + 0.5)*4 -  4^2/2 = (10 + 0.5)*4 - 4^2/2 = (10.5)*4 - 16/2 = 42   - 16/2 = 42   - 16/2 = 34
+py(5) =  (tymax + 0.5)*5 -  5^2/2 = (10 + 0.5)*5 - 5^2/2 = (10.5)*5 - 25/2 = 52.5 - 25/2 = 52.5 - 25/2 = 40
+py(6) =  (tymax + 0.5)*6 -  6^2/2 = (10 + 0.5)*6 - 6^2/2 = (10.5)*6 - 36/2 = 63   - 36/2 = 63   - 36/2 = 45
+py(7) =  (tymax + 0.5)*7 -  7^2/2 = (10 + 0.5)*7 - 7^2/2 = (10.5)*7 - 49/2 = 73.5 - 49/2 = 73.5 - 49/2 = 49
+py(8) =  (tymax + 0.5)*8 -  8^2/2 = (10 + 0.5)*8 - 8^2/2 = (10.5)*8 - 64/2 = 84   - 64/2 = 84   - 64/2 = 52
+py(9) =  (tymax + 0.5)*9 -  9^2/2 = (10 + 0.5)*9 - 9^2/2 = (10.5)*9 - 81/2 = 94.5 - 81/2 = 94.5 - 81/2 = 54
+py(10) = (tymax + 0.5)*10 - 10^2/2 = (10 + 0.5)*10 - 10^2/2 = (10.5)*10 - 100/2 = 105   - 50   = 55
+py(11) = (tymax + 0.5)*11 - 11^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+
+-- but it says max height is 45!
+-- crud, keep going, maybe 10 misses...
+py(11) = (tymax + 0.5)*11 - 11^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5  = 55
+py(12) = (tymax + 0.5)*12 - 12^2/2 = (10 + 0.5)*12 - 12^2/2 = (10.5)*12 - 144/2 = 126   - 72    = 54
+py(13) = (tymax + 0.5)*13 - 13^2/2 = (10 + 0.5)*13 - 13^2/2 = (10.5)*13 - 169/2 = 136.5 - 84.5  = 52
+py(14) = (tymax + 0.5)*14 - 14^2/2 = (10 + 0.5)*14 - 14^2/2 = (10.5)*14 - 196/2 = 147   - 98    = 49
+py(15) = (tymax + 0.5)*15 - 15^2/2 = (10 + 0.5)*15 - 15^2/2 = (10.5)*15 - 225/2 = 157.5 - 112.5 = 45
+py(16) = (tymax + 0.5)*16 - 16^2/2 = (10 + 0.5)*16 - 16^2/2 = (10.5)*16 - 256/2 = 168   - 128   = 40
+py(17) = (tymax + 0.5)*17 - 17^2/2 = (10 + 0.5)*17 - 17^2/2 = (10.5)*17 - 289/2 = 178.5 - 144.5 = 34
+py(18) = (tymax + 0.5)*18 - 18^2/2 = (10 + 0.5)*18 - 18^2/2 = (10.5)*18 - 324/2 = 189   - 162   = 27
+py(19) = (tymax + 0.5)*19 - 19^2/2 = (10 + 0.5)*19 - 19^2/2 = (10.5)*19 - 361/2 = 199.5 - 180.5 = 19
+
+py(20) = (tymax + 0.5)*20 - 20^2/2 = (10 + 0.5)*20 - 20^2/2 = (10.5)*20 - 400/2 = 210   - 200   = 10
+py(21) = (tymax + 0.5)*21 - 21^2/2 = (10 + 0.5)*21 - 21^2/2 = (10.5)*21 - 441/2 = 220.5 - 220.5 = 0
+py(22) = (tymax + 0.5)*22 - 22^2/2 = (10 + 0.5)*22 - 22^2/2 = (10.5)*22 - 484/2 = 231   - 242   = -11
+py(23) = (tymax + 0.5)*23 - 23^2/2 = (10 + 0.5)*23 - 23^2/2 = (10.5)*23 - 529/2 = 241.5 - 264.5 = -23
+
+
+py(1) = (tymax + 0.5)*11 - t^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+py(1) = (tymax + 0.5)*11 - t^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+py(1) = (tymax + 0.5)*11 - t^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+py(1) = (tymax + 0.5)*11 - t^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+py(11) = (tymax + 0.5)*11 - t^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+py(11) = (tymax + 0.5)*11 - t^2/2 = (10 + 0.5)*11 - 11^2/2 = (10.5)*11 - 121/2 = 115.5 - 60.5 = 55
+
+
+
+
+target area: x=277..318, y=-92..-53
+
+py(t) = (ivy + 0.5)*t - t^2/2
+py(92) = (92 + 0.5)*92 - 92^2/2
+8510 - 4232
+4278
+
+py(91) = (91 + 0.5)*91 - 91^2/2
+8326.5 - 4140.5 = 4186
+... still not sure why
+
+-- got it!
+-- when coming down, velocity at x=0 is -ivy-1
+-- so if box is negative, can only shoot up abs(txmax)-1
