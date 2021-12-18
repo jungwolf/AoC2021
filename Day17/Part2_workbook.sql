@@ -135,3 +135,17 @@ where 1=1
 )
 /
 -- 9607, too high
+
+-- it really really helps if you read the problem text correctly
+select count(*) from (
+select unique ivx, ivy
+from day17_part2_v1
+where 1=1 
+ and (ivy*2+1-t)/2*t between -92 and -53
+ and ( (t<ivx  and (ivx*2+1-t)/2*t between 277 and 318)
+       or
+       (t>=ivx and (ivx+1)/2*ivx between 277 and 318)
+      )
+)
+/
+-- 2709
