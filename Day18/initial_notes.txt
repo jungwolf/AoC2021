@@ -1,0 +1,53 @@
+create or replace type pair_number as object (x number, y number);
+/
+create or replace type table_of_pair_number as table of pair_number;
+/
+
+
+exec drop_object_if_exists('TREE_NODES','TABLE')
+
+create table tree_nodes (
+  node_position pair_number
+  ,move_to_cost number
+  ,current_cost number
+  ,process_state varchar2(30)
+  ,children_nodes table_of_pair_number
+)
+nested table children_nodes store as children_nodes_tab
+/
+select treat(node_position as pair_number).x from tree_nodes;
+-- 12
+-- 43
+insert into tree_nodes values(
+  pair_number(1,1)
+  ,1
+  ,null
+  ,'UNPROCESSED'
+  ,table_of_pair_number(pair_number(2,1),pair_number(2,1))
+)
+/
+insert into tree_nodes values(
+  pair_number(1,2)
+  ,2
+  ,null
+  ,'UNPROCESSED'
+  ,table_of_pair_number(pair_number(1,1),pair_number(2,2))
+)
+/
+insert into tree_nodes values(
+  pair_number(2,1)
+  ,4
+  ,null
+  ,'UNPROCESSED'
+  ,table_of_pair_number(pair_number(1,1),pair_number(2,2))
+)
+/
+insert into tree_nodes values(
+  pair_number(2,2)
+  ,3
+  ,null
+  ,'UNPROCESSED'
+  ,table_of_pair_number(pair_number(2,1),pair_number(1,2))
+)
+/
+
