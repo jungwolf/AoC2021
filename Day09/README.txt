@@ -43,7 +43,7 @@ from day09_example e
 ;
 
 5)       string2rows(
-This is a helper function I wrote to split strings into a table of strings. "Table of strings" is a complex data type with its own special syntax.
+This is a helper function I wrote to split strings into a table of varchar2. "Table of ..." is a complex data type with its own special syntax.
 In this case, one row for each character. For example, 2199943210 -> row '2', row '1', row '9', etc.
 The rows are returned in order as they are generated in the function.
 BIG CAVEAT: this is not guarenteed behavior between releases, although it has been stable for multiple major releases so far.
@@ -51,28 +51,29 @@ BIG CAVEAT: this is not guarenteed behavior between releases, although it has be
 
 4)   from table(
 table() syntax lets a sql query treat the "table of ..." type as a row source, like a view or table.
-It returns one column, named column_value. This is a table of varchar2, so column_value data type is varchar2.
+It returns one column, named column_value. My function returns a table of varchar2, so column_value data type is varchar2.
 So, it is basically a single column view (column_value varchar2(4000))
 
 2)   select column_value cv
 I like to give it an alias
 3)     ,rownum rn
 The BIG CAVEAT above lets me use psuedocolumn rownum to assign position.
-Every rowsource has its own rownum sequence, best to give it an alias to avoid confusion.
+Every rows ource has its own rownum sequence, best to give it an alias to avoid confusion.
 
 1),lateral(
 5)       string2rows(
 6)           e.linevalue
-One of the best things I learned this year.
 This is a correlated join, allowing the left table to join with its own row, one-to-one.
 For example, if the left table has a varchar2 column linevalue, the right lateral joined table can use the linevalue column too.
 That's why my string2rows(e.linevalue) function works on the appropriate row from the left table.
 I'm sure it can do more but that's my use so far.
+One of the best things I learned this year.
 */
+
 create or replace view day09_example_1 as
 select e.lineno y, n.rn x, n.cv value
 from day09_example e
-  ,lateral(select column_value cv, rownum rn from table( string2rows(e.linevalue))) n
+  ,lateral(select column_value cv, rownum rn from table(string2rows(e.linevalue))) n
 ;
 /*
 Y	X	VALUE
@@ -148,4 +149,3 @@ where nvl(diff_pre_x,-1) < 0
 order by y,x
 /
 -- 15
-
