@@ -1,4 +1,7 @@
 /*
+Using the example input to show the process. It works for Part1 input as well.
+
+
 Given a hightmap, find all the local minima. Example:
 2199943210
 3987894921
@@ -9,15 +12,20 @@ This has 4 points that are lower than all the points around them.
 X as ->, Y as \/: (2,1) (10,1) (3,3) (7,5)
 How to find those points?
 
-My approach is to break them out to (x,y) rows with the value (height).
-
 Data is in a table day09_example, with a lineno and linevalue:
 (1,'2199943210')
 (2,'3987894921')
 (3,'9856789892')
 (4,'8767896789')
 (5,'9899965678')
+
+STEP 1, generate (x,y,height) rows from the input.
+STEP 2, calculate the height different between cells in each direction.
+STEP 3, find local minimums (minima?)
+STEP 4, calculate final answer
 */
+
+STEP 1, generate (x,y,height) rows from the input.
 
 -- this is a little tricky
 /*
@@ -80,6 +88,8 @@ Y	X	VALUE
 ...
 */
 
+STEP 2, calculate the height different between cells in each direction.
+
 -- use lag to find the differences in the 4 adjacent cells
 -- a good example to show analytical functions can process different data sets even for the same row
 create or replace view day09_example_2 as
@@ -103,3 +113,39 @@ X	Y	VALUE	DIFF_PRE_X	DIFF_POST_X	DIFF_PRE_Y	DIFF_POST_Y
 2	1	1	-1	-8	 - 	-8
 2	2	9	6	1	8	1
 */
+
+STEP 3, find local minimums (minima?)
+
+-- My "diff" values are a little funny, in that they are the amount you subtract to get the next position.
+-- Example, current height 2 going to height 9, the diff is 2-9=-7. From 2, computing the next value is 2-(-7)=9.
+-- That means a local minimum has negative values for all diff columns, meaning AND between the conditions.
+-- The sides are not supposed to change the output, and lag to a side is null, so nulls are treated as a negative number. Shorthand for ( (diff is null) or (diff < 0) ).
+select * 
+from day09_example_2
+where nvl(diff_pre_x,-1) < 0
+  and nvl(diff_pre_y,-1) < 0
+  and nvl(diff_post_x,-1) < 0
+  and nvl(diff_post_y,-1) < 0
+order by y,x
+/
+/*
+X	Y	VALUE	DIFF_PRE_X	DIFF_POST_X	DIFF_PRE_Y	DIFF_POST_Y
+2	1	1	-1	-8	 - 	-8
+10	1	0	-1	 - 	 - 	-1
+3	3	5	-3	-1	-3	-1
+7	5	5	-1	-1	-1	 - 
+*/
+
+STEP 4, calculate final answer
+
+-- The "threat" is height + 1, so sum up the (values+1)
+select sum(value+1)
+from day09_example_2
+where nvl(diff_pre_x,-1) < 0
+  and nvl(diff_pre_y,-1) < 0
+  and nvl(diff_post_x,-1) < 0
+  and nvl(diff_post_y,-1) < 0
+order by y,x
+/
+-- 15
+
