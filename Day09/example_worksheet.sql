@@ -43,4 +43,50 @@ Y	X	VALUE
 1	6	4
 */
 
+create or replace view day09_example_2 as
+select x
+  ,y
+  ,value
+  ,value-lag(value) over (partition by y order by x) diff_pre_x
+  ,value-lag(value) over (partition by y order by x desc) diff_post_x
+  ,value-lag(value) over (partition by x order by y) diff_pre_y
+  ,value-lag(value) over (partition by x order by y desc) diff_post_y
+from day09_example_1
+order by x,y
+/
+/*
+X	Y	VALUE	DIFF_PRE_X	DIFF_POST_X	DIFF_PRE_Y	DIFF_POST_Y
+1	1	2	 - 	1	 - 	-1
+1	2	3	 - 	-6	1	-6
+1	3	9	 - 	1	6	1
+1	4	8	 - 	1	-1	-1
+1	5	9	 - 	1	1	 - 
+2	1	1	-1	-8	 - 	-8
+2	2	9	6	1	8	1
+*/
 
+select * 
+from day09_example_2
+where nvl(diff_pre_x,-1) < 0
+  and nvl(diff_pre_y,-1) < 0
+  and nvl(diff_post_x,-1) < 0
+  and nvl(diff_post_y,-1) < 0
+order by y,x
+/
+/*
+X	Y	VALUE	DIFF_PRE_X	DIFF_POST_X	DIFF_PRE_Y	DIFF_POST_Y
+2	1	1	-1	-8	 - 	-8
+10	1	0	-1	 - 	 - 	-1
+3	3	5	-3	-1	-3	-1
+7	5	5	-1	-1	-1	 - 
+*/
+
+select sum(value+1)
+from day09_example_2
+where nvl(diff_pre_x,-1) < 0
+  and nvl(diff_pre_y,-1) < 0
+  and nvl(diff_post_x,-1) < 0
+  and nvl(diff_post_y,-1) < 0
+order by y,x
+/
+-- 15
