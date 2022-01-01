@@ -66,6 +66,9 @@ from day09_part2_5
 where value!=9;
 select * from day09_part2_6;
 /*
+Root cells do not have a "DOWN_ID" because there are no lower value cells next to them.
+The lag function, by default, returns a null.
+
 ID	DOWN_ID
 1	2
 2
@@ -102,19 +105,63 @@ N	ID	DOWN_ID	STR	BASIN
 3	8	9	/10/9/8	10
 4	7	8	/10/9/8/7	10
 
-select
-  level as n
-  , id
-  , down_id
-  , SYS_CONNECT_BY_PATH(id,'/') str
-  , connect_by_root id basin
-from day09_part2_6
-start with down_id is null
-connect by down_id = prior id ;
+    select
+1)    level as n
+      , id
+      , down_id
+2)    , SYS_CONNECT_BY_PATH(id,'/') str
+3)    , connect_by_root id basin
+    from day09_part2_6
+4)  start with down_id is null
+5)  connect by down_id = prior id ;
 
+I described the logic as going from a leaf cell up to the root. This query actually goes the other way.
+This is the "connect by" version of recursive queries.
+Personally I usually find them confusing if the connection clause becomes too complicated.
+  In that case, I prefer a recursive view because it starts with a base result set and then has a section that iterates over the results.
 
+4)  start with down_id is null
+I'm using the lowest cells as the root nodes, the first level.
+1)    level as n
+The first rows found are considered level 1. The next pass is level 2, after that 3, etc.
+5)  connect by down_id = prior id ;
+"connect by" is used to determing the this level of results.
+"prior" is an operator that allows the current row to refer to a prior level's results.
+In this case, we're looking for rows where their down_id match the previous level's id.
+
+2)    , SYS_CONNECT_BY_PATH(id,'/') str
+3)    , connect_by_root id basin
+N	ID	DOWN_ID	STR	BASIN
+1	2		/2	2
+2	1	2	/2/1	2
+3	11	1	/2/1/11	2
+
+2) shows the path from this row to the root. It displays the root to next node down to the current node.
+Row id 11 then is 2 <- 1 <- 11
+3) skips the path and just shows the root node.
+
+Most of the output isn't necessary. The problem only needs the rows to print their root node.
 */
 
-
 --STEP 5, count the number of cells leading to the same root.
+-- top three basin sizes
+select basin, count(*)
+from day09_part2_7
+group by basin
+order by count(*) desc
+fetch first 3 rows only;
+/*
+BASIN	COUNT(*)
+8782	100
+6838	97
+4919	96
+*/ 
+
 --STEP 6, cheat by manually multiplying the top 3 numbers.
+/*
+Oracle doesn't supply an aggregate multiply function. select multiply(basin) from ... isn't avaliable.
+I could fake it with log/sum()/exp but that introduces integer -> float presision loss.
+I've done it before so I'm fine with skipping that excercise here.
+
+931200
+*/
