@@ -1,0 +1,30 @@
+drop table day12_part1;
+drop sequence day12_line_sq;
+create table day12_part1 (lineno number, linevalue varchar2(4000));
+create sequence day12_line_sq;
+
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'yw-MN');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'wn-XB');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'DG-dc');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'MN-wn');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'yw-DG');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'start-dc');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'start-ah');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'MN-start');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'fi-yw');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'XB-fi');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'wn-ah');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'MN-ah');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'MN-dc');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'end-yw');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'fi-end');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'th-fi');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'end-XB');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'dc-XB');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'yw-XN');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'wn-yw');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'dc-ah');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'MN-fi');
+insert into day12_part1 (lineno, linevalue) values (day12_line_sq.nextval,'wn-DG');
+
+commit;
