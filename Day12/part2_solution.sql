@@ -39,45 +39,46 @@ from day12_part1
 select * from day12_part2_v1 order by cave1, cave2;
 
 create or replace view day12_part2_v2 as
-select cave1 cavefrom, cave2 caveto from day12_part2_v1
+select cave1 cave, cave2 next_cave from day12_part2_v1
 union all
 select cave2, cave1 from day12_part2_v1
 /
 
-select * from day12_part2_v2 order by cavefrom, caveto;
+select * from day12_part2_v2 order by cave, next_cave;
 
 create or replace view day12_part2_v3 as
-select cavefrom, caveto from day12_part2_v2
-where cavefrom != 'end' and caveto != 'start'
+select cave, next_cave from day12_part2_v2
+where cave != 'end' and next_cave != 'start'
 /
 
-select * from day12_part2_v3 order by cavefrom, caveto;
+select * from day12_part2_v3 order by cave, next_cave;
 
 
 select count(*) from (
-  with t (cavefrom,caveto,lvl,current_path,numvisits,maxvisits) as (
-    select cavefrom, caveto, 1 lvl
-      ,case when caveto=lower(caveto) then cavefrom||','||caveto else cavefrom end current_path
+  with t (cave,next_cave,lvl,current_path,numvisits,maxvisits) as (
+    select cave, next_cave, 1 lvl
+      ,case when next_cave=lower(next_cave) then cave||','||next_cave else cave end current_path
       , 0 numvisits
       , 0 maxvisits
     from day12_part2_v3
-    where cavefrom='start'
+    where cave='start'
 
     union all
 
-    select v3.cavefrom, v3.caveto, t.lvl+1
-      , case when v3.caveto=lower(v3.caveto) then t.current_path||','||v3.caveto else t.current_path end
-      , case when v3.caveto=lower(v3.caveto) then regexp_count(t.current_path||','||v3.caveto,v3.caveto) else 0 end
+    select v3.cave, v3.next_cave, t.lvl+1
+      , case when v3.next_cave=lower(v3.next_cave) then t.current_path||','||v3.next_cave else t.current_path end
+      , case when v3.next_cave=lower(v3.next_cave) then regexp_count(t.current_path,v3.next_cave)+1 else 0 end
       , decode(t.maxvisits,2,2,t.numvisits) maxvisits
     from t, day12_part2_v3 v3
     where 1=1
-      and t.caveto=v3.cavefrom
+      and t.next_cave=v3.cave
       and lvl = lvl
       and ( (t.numvisits < 2)
          or (t.numvisits = 2 and t.maxvisits < 2) )
   )
   select * from t
-  where caveto = 'end'
+  where next_cave = 'end'
 )
 /
 -- 122134, taking 1m 34s.
+select * from table(dbms_xplan.display_cursor());
