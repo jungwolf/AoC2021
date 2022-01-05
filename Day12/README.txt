@@ -193,3 +193,20 @@ Almost at the end.
 If the current cave has only been visited once, it is legal.
 If the current cave has been visited twice, is it the first such cave? If so, it is also legal.
 
+8)      and lvl = lvl
+Recursive queries are implicitly detecting cycles to prevent runaway queries. 
+The default method hashes the t.* values used in the where clause to detect when there has been a repeat.
+This doesn't work for my query. (t.next_cave, t.numvisits, t.maxvisits) will repeat.
+(t.next_cave, t.numvisits, t.maxvisits, t.current_path) is unique but I don't have it in the where clause.
+I used t.lvl as a quick workaround. I could have used the CYCLE clause, but I didn't want to dig up the syntax and debug it.
+
+
+The recursive query returns each step of a path as it is being built along with the end result.
+  select * from t
+  where next_cave = 'end'
+This filters out the partial results.
+
+Finally, select count(*) from (...) gives the answer.
+*/
+
+*/
