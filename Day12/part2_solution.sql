@@ -31,53 +31,53 @@ commit;
 
 create or replace view day12_part2_v1 as
 select
-  substr(linevalue,1,instr(linevalue,'-')-1) node1
-  , substr(linevalue,instr(linevalue,'-')+1) node2
+  substr(linevalue,1,instr(linevalue,'-')-1) cave1
+  , substr(linevalue,instr(linevalue,'-')+1) cave2
 from day12_part1
 /
 
-select * from day12_part2_v1 order by node1, node2;
+select * from day12_part2_v1 order by cave1, cave2;
 
 create or replace view day12_part2_v2 as
-select node1, node2 from day12_part2_v1
+select cave1 cavefrom, cave2 caveto from day12_part2_v1
 union all
-select node2, node1 from day12_part2_v1
+select cave2, cave1 from day12_part2_v1
 /
 
-select * from day12_part2_v2 order by node1, node2;
+select * from day12_part2_v2 order by cavefrom, caveto;
 
 create or replace view day12_part2_v3 as
-select node1, node2 from day12_part2_v2
-where node1 != 'end' and node2 != 'start'
+select cavefrom, caveto from day12_part2_v2
+where cavefrom != 'end' and caveto != 'start'
 /
 
-select * from day12_part2_v3 order by node1, node2;
+select * from day12_part2_v3 order by cavefrom, caveto;
 
 
 select count(*) from (
-  with t (node1,node2,lvl,current_path,numvisits,maxvisits) as (
-    select node1, node2, 1 lvl
-      ,case when node2=lower(node2) then node1||','||node2 else node1 end current_path
+  with t (cavefrom,caveto,lvl,current_path,numvisits,maxvisits) as (
+    select cavefrom, caveto, 1 lvl
+      ,case when caveto=lower(caveto) then cavefrom||','||caveto else cavefrom end current_path
       , 0 numvisits
       , 0 maxvisits
     from day12_part2_v3
-    where node1='start'
+    where cavefrom='start'
 
     union all
 
-    select v3.node1, v3.node2, t.lvl+1
-      , case when v3.node2=lower(v3.node2) then t.current_path||','||v3.node2 else t.current_path end
-      , case when v3.node2=lower(v3.node2) then regexp_count(t.current_path||','||v3.node2,lower(v3.node2)) else 0 end
+    select v3.cavefrom, v3.caveto, t.lvl+1
+      , case when v3.caveto=lower(v3.caveto) then t.current_path||','||v3.caveto else t.current_path end
+      , case when v3.caveto=lower(v3.caveto) then regexp_count(t.current_path||','||v3.caveto,v3.caveto) else 0 end
       , decode(t.maxvisits,2,2,t.numvisits) maxvisits
     from t, day12_part2_v3 v3
     where 1=1
-      and t.node2=v3.node1
+      and t.caveto=v3.cavefrom
       and lvl = lvl
       and ( (t.numvisits < 2)
          or (t.numvisits = 2 and t.maxvisits < 2) )
   )
   select * from t
-  where node2 = 'end'
+  where caveto = 'end'
 )
 /
 -- 122134, taking 1m 34s.
