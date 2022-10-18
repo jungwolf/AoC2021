@@ -4,7 +4,7 @@
 
 -- uses a user defined type
 -- notice it can only handle inputs up to 4000 characters.
-create or replace type varchar2_tbl as table of varchar2(4000);
+create or replace type varchar2_tbl as table of varchar2(4000)
 /
 
 create or replace function string2rows (p_string varchar2, p_delimiter varchar2 default null) return varchar2_tbl as
